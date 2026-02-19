@@ -65,6 +65,12 @@ class CookieUpdate(BaseModel):
     expired: Optional[bool] = None
     link_generated: Optional[bool] = None
 
+class GenerateLinkRequest(BaseModel):
+    cookie_id: str
+
+class GenerateLinkResponse(BaseModel):
+    link: str
+
 class ValidationResult(BaseModel):
     valid: bool
     message: str
