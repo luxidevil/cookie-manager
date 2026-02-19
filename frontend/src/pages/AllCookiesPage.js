@@ -74,26 +74,28 @@ export default function AllCookiesPage() {
   const handleGetLink = async (cookieId) => {
     setUpdatingId(cookieId);
     try {
-      // TODO: Replace with actual RDP call later
-      // For now, generate a mock link
-      const mockLink = `https://example.com/cookie/${cookieId.substring(0, 8)}`;
+      // Call backend to generate link via RDP
+      const response = await axios.post(
+        `${API}/cookies/${cookieId}/generate-link`,
+        {},
+        { headers: getAuthHeaders() }
+      );
+      
+      const link = response.data.link;
       
       setGeneratedLinks((prev) => ({
         ...prev,
-        [cookieId]: mockLink,
+        [cookieId]: link,
       }));
       
-      const response = await axios.patch(
-        `${API}/cookies/${cookieId}`,
-        { link_generated: true },
-        { headers: getAuthHeaders() }
-      );
+      // Update local state
       setCookies((prev) =>
-        prev.map((c) => (c.id === cookieId ? response.data : c))
+        prev.map((c) => (c.id === cookieId ? { ...c, link_generated: true } : c))
       );
       toast.success("Link generated");
     } catch (error) {
-      toast.error("Failed to generate link");
+      const message = error.response?.data?.detail || "Failed to generate link";
+      toast.error(message);
     } finally {
       setUpdatingId(null);
     }
