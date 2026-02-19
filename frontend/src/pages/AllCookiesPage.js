@@ -118,11 +118,23 @@ export default function AllCookiesPage() {
 
   const handleCopyLink = async (cookieId, link) => {
     try {
-      await navigator.clipboard.writeText(link);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(link);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = link;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
       setCopiedLinkId(cookieId);
       toast.success("Link copied to clipboard");
       setTimeout(() => setCopiedLinkId(null), 2000);
     } catch (error) {
+      console.error("Copy link failed:", error);
       toast.error("Failed to copy link");
     }
   };
