@@ -1,0 +1,36 @@
+# Google Cloud Build configuration for Cloud Run deployment
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/cookie-manager:$COMMIT_SHA', '.']
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/cookie-manager:$COMMIT_SHA']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'cookie-manager'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/cookie-manager:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'MONGO_URL=${_MONGO_URL},DB_NAME=cookie_manager,JWT_SECRET=${_JWT_SECRET}'
+      - '--port'
+      - '8080'
+
+images:
+  - 'gcr.io/$PROJECT_ID/cookie-manager:$COMMIT_SHA'
+
+substitutions:
+  _REGION: us-central1
+  _MONGO_URL: ''
+  _JWT_SECRET: ''
