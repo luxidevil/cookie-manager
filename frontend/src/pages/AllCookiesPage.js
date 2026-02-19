@@ -45,10 +45,25 @@ export default function AllCookiesPage() {
 
   const handleCopy = async (cookie) => {
     try {
-      await navigator.clipboard.writeText(cookie.content);
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(cookie.content);
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = cookie.content;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
       toast.success(`${cookie.name} copied to clipboard`);
     } catch (error) {
-      toast.error("Failed to copy");
+      // Final fallback - show content in alert for manual copy
+      console.error("Copy failed:", error);
+      toast.error("Copy failed. Please copy manually.");
     }
   };
 
