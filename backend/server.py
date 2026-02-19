@@ -235,6 +235,56 @@ async def delete_cookie(cookie_id: str, user: dict = Depends(verify_token)):
         raise HTTPException(status_code=404, detail="Cookie not found")
     return {"message": "Cookie deleted"}
 
+@api_router.post("/cookies/{cookie_id}/generate-link", response_model=GenerateLinkResponse)
+async def generate_link(cookie_id: str, user: dict = Depends(verify_token)):
+    """
+    Generate link by sending cookie to RDP endpoint.
+    The RDP endpoint URL should be configured in RDP_ENDPOINT_URL env variable.
+    """
+    # Get the cookie
+    cookie = await db.cookies.find_one({"id": cookie_id}, {"_id": 0})
+    if not cookie:
+        raise HTTPException(status_code=404, detail="Cookie not found")
+    
+    # Check if RDP endpoint is configured
+    if not RDP_ENDPOINT_URL:
+        raise HTTPException(
+            status_code=503, 
+            detail="RDP endpoint not configured. Set RDP_ENDPOINT_URL in environment."
+        )
+    
+    try:
+        # Send raw cookie JSON to RDP endpoint
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                RDP_ENDPOINT_URL,
+                content=cookie["content"],  # Send raw JSON as-is
+                headers={"Content-Type": "application/json"}
+            )
+            response.raise_for_status()
+            
+            # RDP returns the HTTPS link directly
+            link = response.text.strip()
+            
+            # Validate it's a proper URL
+            if not link.startswith("https://"):
+                raise HTTPException(status_code=502, detail="RDP returned invalid link format")
+            
+            # Update cookie to mark link as generated and store the link
+            await db.cookies.update_one(
+                {"id": cookie_id},
+                {"$set": {"link_generated": True, "generated_link": link}}
+            )
+            
+            return GenerateLinkResponse(link=link)
+            
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="RDP request timed out")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=502, detail=f"RDP error: {e.response.status_code}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Failed to connect to RDP: {str(e)}")
+
 # Health check
 @api_router.get("/health")
 async def health_check():
