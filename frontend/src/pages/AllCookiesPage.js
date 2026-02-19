@@ -205,41 +205,70 @@ export default function AllCookiesPage() {
                         data-testid={`expired-checkbox-${cookie.id}`}
                       />
                     </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCopy(cookie)}
-                          className="btn-active"
-                          data-testid={`copy-button-${cookie.id}`}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </Button>
-                        {cookie.link_generated ? (
+                    <TableCell>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
                           <Button
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            onClick={() => handleGetLink(cookie.id)}
-                            disabled={updatingId === cookie.id}
-                            className="btn-active text-xs"
-                            data-testid={`regenerate-link-${cookie.id}`}
+                            onClick={() => handleCopy(cookie)}
+                            className="btn-active"
+                            data-testid={`copy-button-${cookie.id}`}
                           >
-                            <RefreshCw className="w-3.5 h-3.5 mr-1" />
-                            Generate Again
+                            <Copy className="w-4 h-4" />
                           </Button>
-                        ) : (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleGetLink(cookie.id)}
-                            disabled={updatingId === cookie.id}
-                            className="btn-active text-xs"
-                            data-testid={`get-link-${cookie.id}`}
-                          >
-                            <Link className="w-3.5 h-3.5 mr-1" />
-                            Get Link
-                          </Button>
+                          {cookie.link_generated && generatedLinks[cookie.id] ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleGetLink(cookie.id)}
+                              disabled={updatingId === cookie.id}
+                              className="btn-active text-xs"
+                              data-testid={`regenerate-link-${cookie.id}`}
+                            >
+                              <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                              Generate Again
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleGetLink(cookie.id)}
+                              disabled={updatingId === cookie.id}
+                              className="btn-active text-xs"
+                              data-testid={`get-link-${cookie.id}`}
+                            >
+                              {updatingId === cookie.id ? (
+                                <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                              ) : (
+                                <Link className="w-3.5 h-3.5 mr-1" />
+                              )}
+                              Get Link
+                            </Button>
+                          )}
+                        </div>
+                        {generatedLinks[cookie.id] && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <Input
+                              value={generatedLinks[cookie.id]}
+                              readOnly
+                              className="h-8 text-xs font-mono bg-muted/50 flex-1"
+                              data-testid={`link-input-${cookie.id}`}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCopyLink(cookie.id, generatedLinks[cookie.id])}
+                              className="btn-active h-8 px-2"
+                              data-testid={`copy-link-${cookie.id}`}
+                            >
+                              {copiedLinkId === cookie.id ? (
+                                <Check className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </TableCell>
