@@ -160,7 +160,7 @@ export default function AllCookiesPage() {
                   <TableHead className="font-semibold text-center w-24">
                     Expired
                   </TableHead>
-                  <TableHead className="font-semibold text-center w-40">
+                  <TableHead className="font-semibold w-72">
                     Actions
                   </TableHead>
                 </TableRow>
