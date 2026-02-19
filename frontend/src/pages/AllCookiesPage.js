@@ -44,26 +44,34 @@ export default function AllCookiesPage() {
   }, []);
 
   const handleCopy = async (cookie) => {
+    // Use execCommand as primary method for better compatibility
+    const textArea = document.createElement("textarea");
+    textArea.value = cookie.content;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
     try {
-      // Try modern clipboard API first
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(cookie.content);
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      if (successful) {
+        toast.success(`${cookie.name} copied to clipboard`);
       } else {
-        // Fallback for older browsers or non-secure contexts
-        const textArea = document.createElement("textarea");
-        textArea.value = cookie.content;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
+        throw new Error("execCommand failed");
       }
-      toast.success(`${cookie.name} copied to clipboard`);
     } catch (error) {
-      // Final fallback - show content in alert for manual copy
-      console.error("Copy failed:", error);
-      toast.error("Copy failed. Please copy manually.");
+      document.body.removeChild(textArea);
+      // Try clipboard API as fallback
+      try {
+        await navigator.clipboard.writeText(cookie.content);
+        toast.success(`${cookie.name} copied to clipboard`);
+      } catch (clipboardError) {
+        console.error("Copy failed:", clipboardError);
+        toast.error("Copy failed. Please copy manually.");
+      }
     }
   };
 
