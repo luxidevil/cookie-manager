@@ -125,25 +125,36 @@ export default function AllCookiesPage() {
   };
 
   const handleCopyLink = async (cookieId, link) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = link;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(link);
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      if (successful) {
+        setCopiedLinkId(cookieId);
+        toast.success("Link copied to clipboard");
+        setTimeout(() => setCopiedLinkId(null), 2000);
       } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = link;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
+        throw new Error("execCommand failed");
       }
-      setCopiedLinkId(cookieId);
-      toast.success("Link copied to clipboard");
-      setTimeout(() => setCopiedLinkId(null), 2000);
     } catch (error) {
-      console.error("Copy link failed:", error);
-      toast.error("Failed to copy link");
+      document.body.removeChild(textArea);
+      try {
+        await navigator.clipboard.writeText(link);
+        setCopiedLinkId(cookieId);
+        toast.success("Link copied to clipboard");
+        setTimeout(() => setCopiedLinkId(null), 2000);
+      } catch (clipboardError) {
+        console.error("Copy link failed:", clipboardError);
+        toast.error("Failed to copy link");
+      }
     }
   };
 
