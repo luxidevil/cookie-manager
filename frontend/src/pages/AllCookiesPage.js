@@ -74,6 +74,15 @@ export default function AllCookiesPage() {
   const handleGetLink = async (cookieId) => {
     setUpdatingId(cookieId);
     try {
+      // TODO: Replace with actual RDP call later
+      // For now, generate a mock link
+      const mockLink = `https://example.com/cookie/${cookieId.substring(0, 8)}`;
+      
+      setGeneratedLinks((prev) => ({
+        ...prev,
+        [cookieId]: mockLink,
+      }));
+      
       const response = await axios.patch(
         `${API}/cookies/${cookieId}`,
         { link_generated: true },
@@ -82,11 +91,22 @@ export default function AllCookiesPage() {
       setCookies((prev) =>
         prev.map((c) => (c.id === cookieId ? response.data : c))
       );
-      toast.success("Link generated (placeholder)");
+      toast.success("Link generated");
     } catch (error) {
       toast.error("Failed to generate link");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleCopyLink = async (cookieId, link) => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedLinkId(cookieId);
+      toast.success("Link copied to clipboard");
+      setTimeout(() => setCopiedLinkId(null), 2000);
+    } catch (error) {
+      toast.error("Failed to copy link");
     }
   };
 
