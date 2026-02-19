@@ -1,0 +1,125 @@
+{
+  "identity": {
+    "persona": "E1",
+    "mission": "Create a minimal, high-utility internal tool that feels like a Swiss instrument—precise, clean, and reliable.",
+    "tone": "Functional, clarity-first, reliable, highly responsive."
+  },
+  "typography": {
+    "headings": {
+      "family": "Work Sans, sans-serif",
+      "weights": ["600", "500"],
+      "tracking": "-0.02em",
+      "usage": "Page titles, Section headers"
+    },
+    "body": {
+      "family": "Inter, sans-serif",
+      "weights": ["400", "500"],
+      "usage": "General text, labels, buttons"
+    },
+    "mono": {
+      "family": "JetBrains Mono, monospace",
+      "weights": ["400"],
+      "usage": "Cookie content, JSON data, IDs"
+    },
+    "scale": {
+      "h1": "text-3xl md:text-4xl font-semibold tracking-tight",
+      "h2": "text-2xl font-medium tracking-tight",
+      "h3": "text-xl font-medium",
+      "body": "text-sm md:text-base leading-relaxed",
+      "mono": "text-xs md:text-sm font-mono"
+    }
+  },
+  "colors": {
+    "palette": {
+      "name": "Swiss Utility",
+      "mode": "light",
+      "background": "#ffffff",
+      "foreground": "#0f172a",
+      "primary": "#0f172a",
+      "primary_foreground": "#ffffff",
+      "secondary": "#f1f5f9",
+      "secondary_foreground": "#0f172a",
+      "muted": "#f8fafc",
+      "muted_foreground": "#64748b",
+      "border": "#e2e8f0",
+      "accent": "#0f172a",
+      "danger": "#ef4444",
+      "success": "#22c55e",
+      "warning": "#f59e0b"
+    },
+    "usage": {
+      "body_bg": "bg-white",
+      "card_bg": "bg-white border border-border shadow-sm",
+      "sidebar_bg": "bg-secondary/50 backdrop-blur-sm",
+      "primary_button": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+      "secondary_button": "bg-white border border-input hover:bg-accent hover:text-accent-foreground",
+      "ghost_button": "hover:bg-accent hover:text-accent-foreground"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container": "p-6 md:p-8 max-w-7xl mx-auto",
+      "section": "py-8 md:py-12",
+      "element": "gap-4 md:gap-6"
+    },
+    "grid": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "card_list": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    },
+    "radius": {
+      "default": "rounded-lg",
+      "button": "rounded-md",
+      "input": "rounded-md"
+    }
+  },
+  "components": {
+    "login": {
+      "structure": "Centered card on a subtle dot-pattern or gray background.",
+      "visuals": "Minimalist, focus on the form. Use a 'lock' icon or abstract logo.",
+      "image_url": "https://images.unsplash.com/photo-1696013910376-c56f76dd8178?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    "cookie_paste": {
+      "structure": "Split view or Vertical stack: Large Textarea (top/left) + Validation Feedback (bottom/right).",
+      "elements": "Textarea must be 'font-mono' and tall (h-96). Validation messages should be prominent alerts.",
+      "actions": "Primary 'Validate & Save' button."
+    },
+    "cookie_list": {
+      "structure": "Table view for density, or wide Cards for detail.",
+      "columns": ["Cookie ID/Preview (truncated)", "Status (Sold/Expired)", "Actions (Copy, Link)"],
+      "interactions": "Click row to expand details. Toggle switches for status. Copy button with toast feedback.",
+      "styles": "Use 'Table' component from shadcn. Row hover effects: 'hover:bg-muted/50'."
+    }
+  },
+  "visual_enhancers": {
+    "textures": "Subtle noise or dot pattern on the main background to reduce sterility.",
+    "shadows": "shadow-sm for cards, shadow-md for dropdowns/modals. Avoid heavy shadows.",
+    "borders": "1px solid borders in #e2e8f0. No fuzzy borders."
+  },
+  "motion": {
+    "hover": "transition-colors duration-200",
+    "enter": "animate-in fade-in slide-in-from-bottom-2 duration-300",
+    "interactions": "Active scale down (0.98) on buttons."
+  },
+  "instructions_to_main_agent": [
+    "Use 'Work Sans' for all headings and 'Inter' for body text. Load them via Google Fonts.",
+    "For the 'Notepad' feel in the paste page, use a large textarea with 'font-mono' and 'bg-muted/30'.",
+    "Ensure the 'Sold' and 'Expired' toggles update visually instantly (optimistic UI) and persist state.",
+    "The 'Get Link' button should simply show a toast or change text to 'Link Generated' (mock functionality).",
+    "Use 'sonner' for all notifications (copy success, validation errors).",
+    "Strictly follow the 'Anti-AI' rule: Do not use generic purple/teal gradients. Stick to the monochrome + stark accent palette.",
+    "Implement a 'Logout' button in the layout header."
+  ],
+  "universal_guidelines": [
+    "Do not use generic centered layouts for the dashboard; use a sidebar or top-nav structure.",
+    "Avoid 'AI slop' aesthetics (shiny gradients, excessive glassmorphism). Keep it matte and clean.",
+    "Use 2x-3x spacing (p-6, p-8) to let content breathe, even in this minimal tool.",
+    "All interactive elements must have 'data-testid' attributes."
+  ],
+  "image_urls": [
+    {
+      "url": "https://images.unsplash.com/photo-1696013910376-c56f76dd8178?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "category": "login_background",
+      "description": "Abstract minimalist lock on black surface"
+    }
+  ]
+}
