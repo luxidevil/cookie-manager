@@ -27,6 +27,9 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ.get('JWT_SECRET', 'seko-cookie-secret-key-2024')
 JWT_ALGORITHM = "HS256"
 
+# RDP Config
+RDP_ENDPOINT_URL = os.environ.get('RDP_ENDPOINT_URL', '')
+
 # Create the main app
 app = FastAPI()
 
