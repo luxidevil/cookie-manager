@@ -22,6 +22,8 @@ export default function AllCookiesPage() {
   const [cookies, setCookies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [generatedLinks, setGeneratedLinks] = useState({});
+  const [copiedLinkId, setCopiedLinkId] = useState(null);
   const { getAuthHeaders } = useAuth();
 
   const fetchCookies = async () => {
