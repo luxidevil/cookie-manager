@@ -12,8 +12,18 @@ services:
       - DB_NAME=cookie_manager
       - CORS_ORIGINS=*
       - JWT_SECRET=${JWT_SECRET:-seko-cookie-secret-key-2024}
+      - RDP_ENDPOINT_URL=http://rdp_service:5000/generate-link
     depends_on:
       - mongo
+      - rdp_service
+    restart: unless-stopped
+
+  rdp_service:
+    build:
+      context: ./rdp_service
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
     restart: unless-stopped
 
   mongo:
