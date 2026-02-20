@@ -136,33 +136,13 @@ export default function AllCookiesPage() {
     }
   };
 
-  const handleGetLink = async (cookieId) => {
-    setUpdatingId(cookieId);
-    try {
-      // Call backend to generate link via RDP
-      const response = await axios.post(
-        `${API}/cookies/${cookieId}/generate-link`,
-        {},
-        { headers: getAuthHeaders() }
-      );
-      
-      const link = response.data.link;
-      
-      setGeneratedLinks((prev) => ({
-        ...prev,
-        [cookieId]: link,
-      }));
-      
-      // Update local state
-      setCookies((prev) =>
-        prev.map((c) => (c.id === cookieId ? { ...c, link_generated: true } : c))
-      );
-      toast.success("Link generated");
-    } catch (error) {
-      const message = error.response?.data?.detail || "Failed to generate link";
-      toast.error(message);
-    } finally {
-      setUpdatingId(null);
+  const handleGetLink = (cookieId) => {
+    // Add to queue if not already queued or processing
+    if (!linkQueue.includes(cookieId) && updatingId !== cookieId) {
+      setLinkQueue((prev) => [...prev, cookieId]);
+      if (linkQueue.length > 0) {
+        toast.info(`Queued (${linkQueue.length + 1} pending)`);
+      }
     }
   };
 
