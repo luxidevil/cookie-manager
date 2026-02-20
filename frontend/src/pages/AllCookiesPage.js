@@ -292,28 +292,36 @@ export default function AllCookiesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleGetLink(cookie.id)}
-                              disabled={updatingId === cookie.id}
+                              disabled={updatingId === cookie.id || linkQueue.includes(cookie.id)}
                               className="btn-active text-xs"
                               data-testid={`regenerate-link-${cookie.id}`}
                             >
-                              <RefreshCw className="w-3.5 h-3.5 mr-1" />
-                              Generate Again
+                              {updatingId === cookie.id ? (
+                                <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                              ) : linkQueue.includes(cookie.id) ? (
+                                <span className="mr-1">#{linkQueue.indexOf(cookie.id) + 1}</span>
+                              ) : (
+                                <RefreshCw className="w-3.5 h-3.5 mr-1" />
+                              )}
+                              {updatingId === cookie.id ? "Generating..." : linkQueue.includes(cookie.id) ? "Queued" : "Generate Again"}
                             </Button>
                           ) : (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleGetLink(cookie.id)}
-                              disabled={updatingId === cookie.id}
+                              disabled={updatingId === cookie.id || linkQueue.includes(cookie.id)}
                               className="btn-active text-xs"
                               data-testid={`get-link-${cookie.id}`}
                             >
                               {updatingId === cookie.id ? (
                                 <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" />
+                              ) : linkQueue.includes(cookie.id) ? (
+                                <span className="mr-1">#{linkQueue.indexOf(cookie.id) + 1}</span>
                               ) : (
                                 <Link className="w-3.5 h-3.5 mr-1" />
                               )}
-                              Get Link
+                              {updatingId === cookie.id ? "Generating..." : linkQueue.includes(cookie.id) ? "Queued" : "Get Link"}
                             </Button>
                           )}
                         </div>
