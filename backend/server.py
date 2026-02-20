@@ -263,14 +263,10 @@ async def generate_link(cookie_id: str, user: dict = Depends(verify_token)):
             )
             response.raise_for_status()
             
-            # RDP returns the HTTPS link directly
+            # RDP returns the link/response directly
             link = response.text.strip()
             
-            # Validate it's a proper URL
-            if not link.startswith("https://"):
-                raise HTTPException(status_code=502, detail="RDP returned invalid link format")
-            
-            # Update cookie to mark link as generated and store the link
+            # Store the response
             await db.cookies.update_one(
                 {"id": cookie_id},
                 {"$set": {"link_generated": True, "generated_link": link}}
