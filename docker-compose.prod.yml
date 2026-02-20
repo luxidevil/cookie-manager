@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: cookie-manager-app
     ports:
       - "80:8080"
     environment:
@@ -19,21 +20,43 @@ services:
     restart: always
     networks:
       - cookie-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   mongo:
     image: mongo:6
+    container_name: cookie-manager-mongo
     volumes:
       - mongo_data:/data/db
       - mongo_config:/data/configdb
     restart: always
     networks:
       - cookie-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    # Memory limit to prevent MongoDB from using too much RAM
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
 volumes:
   mongo_data:
