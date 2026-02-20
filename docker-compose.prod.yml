@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:8080"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - DB_NAME=cookie_manager
+      - CORS_ORIGINS=*
+      - JWT_SECRET=${JWT_SECRET:-seko-cookie-secret-key-2024-production}
+      - RDP_ENDPOINT_URL=${RDP_ENDPOINT_URL:-}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: always
+    networks:
+      - cookie-network
+
+  mongo:
+    image: mongo:6
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+    restart: always
+    networks:
+      - cookie-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mongo_data:
+    driver: local
+  mongo_config:
+    driver: local
+
+networks:
+  cookie-network:
+    driver: bridge
