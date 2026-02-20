@@ -45,6 +45,46 @@ export default function AllCookiesPage() {
     fetchCookies();
   }, []);
 
+  // Process link generation queue one by one
+  useEffect(() => {
+    const processQueue = async () => {
+      if (linkQueue.length === 0 || isProcessingQueue) return;
+      
+      setIsProcessingQueue(true);
+      const cookieId = linkQueue[0];
+      
+      setUpdatingId(cookieId);
+      try {
+        const response = await axios.post(
+          `${API}/cookies/${cookieId}/generate-link`,
+          {},
+          { headers: getAuthHeaders() }
+        );
+        
+        const link = response.data.link;
+        
+        setGeneratedLinks((prev) => ({
+          ...prev,
+          [cookieId]: link,
+        }));
+        
+        setCookies((prev) =>
+          prev.map((c) => (c.id === cookieId ? { ...c, link_generated: true } : c))
+        );
+        toast.success("Link generated");
+      } catch (error) {
+        const message = error.response?.data?.detail || "Failed to generate link";
+        toast.error(message);
+      } finally {
+        setUpdatingId(null);
+        setLinkQueue((prev) => prev.slice(1)); // Remove processed item
+        setIsProcessingQueue(false);
+      }
+    };
+    
+    processQueue();
+  }, [linkQueue, isProcessingQueue, getAuthHeaders]);
+
   const handleCopy = async (cookie) => {
     // Use execCommand as primary method for better compatibility
     const textArea = document.createElement("textarea");
