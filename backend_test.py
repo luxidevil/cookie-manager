@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 
 class CookieManagerAPITester:
-    def __init__(self, base_url="https://cookie-paste-verify.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://vm-build-convert.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
         self.tests_run = 0
